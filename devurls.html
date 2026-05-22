@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>DevURLs — Developer Resource Directory</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ─── RESET ─────────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0b0d14;
+  --bg2:#11141f;
+  --bg3:#181c2c;
+  --bg4:#1f2438;
+  --brd:#252a3d;
+  --brd2:#2e3450;
+  --txt:#e8eaf6;
+  --txt2:#8b90b8;
+  --txt3:#4a5070;
+  --accent:#7c6aff;
+  --mono:'DM Mono',monospace;
+  --sans:'DM Sans',sans-serif;
+  --display:'Syne',sans-serif;
+  --ease:cubic-bezier(.4,0,.2,1);
+  --spring:cubic-bezier(.34,1.56,.64,1);
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--sans);
+  background:var(--bg);
+  color:var(--txt);
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:inherit;text-decoration:none}
+button{font-family:var(--sans);cursor:pointer;border:none;background:none}
+
+/* ─── NOISE OVERLAY ─────────────────────────────────────── */
+body::before{
+  content:'';
+  position:fixed;inset:0;z-index:0;
+  opacity:.025;
+  pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:200px;
+}
+
+/* ─── GRID LINES BACKGROUND ─────────────────────────────── */
+body::after{
+  content:'';
+  position:fixed;inset:0;z-index:0;
+  pointer-events:none;
+  background-image:
+    linear-gradient(var(--brd) 1px,transparent 1px),
+    linear-gradient(90deg,var(--brd) 1px,transparent 1px);
+  background-size:48px 48px;
+  opacity:.35;
+}
+
+/* ─── LAYOUT ─────────────────────────────────────────────── */
+#root{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column}
+
+/* ─── HEADER ─────────────────────────────────────────────── */
+header{
+  border-bottom:1px solid var(--brd);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  background:rgba(11,13,20,.85);
+  position:sticky;top:0;z-index:100;
+}
+.header-inner{
+  max-width:1400px;margin:0 auto;
+  padding:0 32px;
+  height:64px;
+  display:flex;align-items:center;gap:24px;
+}
+.logo{
+  display:flex;align-items:center;gap:10px;flex-shrink:0;
+}
+.logo-mark{
+  width:32px;height:32px;border-radius:8px;
+  background:var(--accent);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:14px;font-weight:500;color:#fff;
+  box-shadow:0 0 20px rgba(124,106,255,.4);
+  position:relative;overflow:hidden;
+}
+.logo-mark::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,.15),transparent);
+}
+.logo-text{font-family:var(--display);font-size:18px;font-weight:800;color:var(--txt);letter-spacing:-.3px}
+.logo-text span{color:var(--accent)}
+
+/* search */
+.search-wrap{
+  flex:1;max-width:480px;position:relative;
+}
+.search-ico{
+  position:absolute;left:13px;top:50%;transform:translateY(-50%);
+  font-size:14px;color:var(--txt3);pointer-events:none;
+  font-family:var(--mono);
+}
+#search{
+  width:100%;height:38px;
+  background:var(--bg3);border:1.5px solid var(--brd2);
+  border-radius:10px;
+  padding:0 12px 0 36px;
+  font-family:var(--mono);font-size:13px;color:var(--txt);
+  outline:none;transition:border-color .2s,box-shadow .2s,background .2s;
+}
+#search::placeholder{color:var(--txt3)}
+#search:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(124,106,255,.15);background:var(--bg4)}
+.search-kbd{
+  position:absolute;right:10px;top:50%;transform:translateY(-50%);
+  font-family:var(--mono);font-size:10px;color:var(--txt3);
+  background:var(--bg4);border:1px solid var(--brd2);
+  border-radius:4px;padding:2px 6px;pointer-events:none;
+}
+.header-gap{flex:1}
+/* header stats */
+.h-stat{
+  display:flex;align-items:center;gap:5px;
+  font-family:var(--mono);font-size:12px;color:var(--txt3);
+  background:var(--bg3);border:1px solid var(--brd);
+  border-radius:8px;padding:5px 10px;
+}
+.h-stat b{color:var(--txt);font-weight:500}
+/* theme toggle */
+.theme-btn{
+  width:34px;height:34px;border-radius:8px;
+  background:var(--bg3);border:1.5px solid var(--brd2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;transition:all .2s;color:var(--txt2);
+}
+.theme-btn:hover{border-color:var(--accent);color:var(--txt);background:var(--bg4)}
+
+/* ─── CATEGORY NAV ──────────────────────────────────────── */
+.cat-nav{
+  border-bottom:1px solid var(--brd);
+  background:rgba(11,13,20,.7);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  position:sticky;top:64px;z-index:90;
+}
+.cat-nav-inner{
+  max-width:1400px;margin:0 auto;padding:0 32px;
+  display:flex;align-items:center;gap:4px;
+  overflow-x:auto;scrollbar-width:none;
+}
+.cat-nav-inner::-webkit-scrollbar{display:none}
+.cat-pill{
+  display:flex;align-items:center;gap:6px;
+  padding:10px 14px;border-radius:0;
+  font-family:var(--mono);font-size:12px;font-weight:500;
+  color:var(--txt3);white-space:nowrap;
+  border-bottom:2px solid transparent;
+  transition:color .15s,border-color .15s;
+  -webkit-tap-highlight-color:transparent;
+}
+.cat-pill:hover{color:var(--txt2)}
+.cat-pill.active{color:var(--txt);border-bottom-color:var(--accent)}
+.cat-pill-dot{
+  width:7px;height:7px;border-radius:50%;flex-shrink:0;
+  transition:transform .2s var(--spring);
+}
+.cat-pill.active .cat-pill-dot{transform:scale(1.4)}
+.cat-count{
+  font-size:10px;color:var(--txt3);background:var(--bg3);
+  border-radius:4px;padding:1px 5px;
+}
+.cat-pill.active .cat-count{background:var(--bg4);color:var(--txt2)}
+
+/* ─── MAIN CONTENT ──────────────────────────────────────── */
+main{
+  flex:1;max-width:1400px;margin:0 auto;
+  padding:28px 32px 64px;width:100%;
+}
+
+/* ─── SECTION ────────────────────────────────────────────── */
+.section{margin-bottom:48px;animation:fadeUp .4s var(--ease) both}
+.section-header{
+  display:flex;align-items:center;gap:12px;
+  margin-bottom:16px;padding-bottom:12px;
+  border-bottom:1px solid var(--brd);
+}
+.section-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.section-title{
+  font-family:var(--display);font-size:15px;font-weight:700;
+  letter-spacing:.5px;text-transform:uppercase;
+}
+.section-count{
+  font-family:var(--mono);font-size:11px;color:var(--txt3);
+  margin-left:auto;
+}
+.section-line{flex:1;height:1px;background:var(--brd)}
+
+/* ─── CARDS GRID ─────────────────────────────────────────── */
+.cards-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+  gap:10px;
+}
+
+/* ─── CARD ───────────────────────────────────────────────── */
+.card{
+  background:var(--bg2);
+  border:1px solid var(--brd);
+  border-radius:12px;
+  padding:14px 16px;
+  display:flex;align-items:flex-start;gap:12px;
+  transition:border-color .15s,background .15s,transform .15s var(--spring),box-shadow .15s;
+  cursor:pointer;
+  position:relative;overflow:hidden;
+  text-decoration:none;color:inherit;
+}
+.card::before{
+  content:'';position:absolute;inset:0;border-radius:12px;
+  background:linear-gradient(135deg,rgba(255,255,255,.03),transparent);
+  pointer-events:none;
+}
+.card:hover{
+  transform:translateY(-2px);
+  box-shadow:0 8px 24px rgba(0,0,0,.35);
+}
+.card:active{transform:translateY(0);box-shadow:none}
+/* colored left border on hover — set by JS per category */
+.card::after{
+  content:'';position:absolute;left:0;top:0;bottom:0;
+  width:3px;border-radius:12px 0 0 12px;
+  background:var(--c-accent,var(--accent));
+  opacity:0;transition:opacity .15s;
+}
+.card:hover::after{opacity:1}
+/* favicon */
+.card-fav{
+  width:32px;height:32px;border-radius:8px;flex-shrink:0;
+  background:var(--bg3);border:1px solid var(--brd);
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;overflow:hidden;
+  transition:transform .2s var(--spring);
+}
+.card:hover .card-fav{transform:scale(1.1)}
+.card-fav img{width:18px;height:18px;object-fit:contain;border-radius:3px}
+.card-body{flex:1;min-width:0}
+.card-name{
+  font-size:13px;font-weight:600;color:var(--txt);
+  margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  transition:color .15s;
+}
+.card:hover .card-name{color:#fff}
+.card-desc{
+  font-size:11px;color:var(--txt3);line-height:1.5;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+}
+.card-tag{
+  font-family:var(--mono);font-size:9px;font-weight:500;
+  padding:2px 6px;border-radius:4px;
+  border:1px solid;margin-top:6px;display:inline-block;
+  letter-spacing:.3px;text-transform:uppercase;
+}
+
+/* ─── EMPTY STATE ────────────────────────────────────────── */
+#empty{
+  display:none;text-align:center;padding:80px 20px;
+}
+#empty.show{display:block}
+.empty-ico{font-size:48px;margin-bottom:16px;opacity:.4}
+.empty-txt{font-family:var(--mono);font-size:14px;color:var(--txt3)}
+
+/* ─── FOOTER ─────────────────────────────────────────────── */
+footer{
+  border-top:1px solid var(--brd);
+  padding:16px 32px;
+  display:flex;align-items:center;gap:12px;
+  font-family:var(--mono);font-size:11px;color:var(--txt3);
+  max-width:1400px;margin:0 auto;width:100%;
+}
+.ft-gap{flex:1}
+
+/* ─── LIGHT THEME ─────────────────────────────────────────── */
+[data-theme="light"]{
+  --bg:#f4f5f9;--bg2:#ffffff;--bg3:#f0f1f7;--bg4:#e8eaf2;
+  --brd:#dde0ee;--brd2:#c8cce0;
+  --txt:#1a1d2e;--txt2:#5a6080;--txt3:#9098bb;
+  --nav-bg:#fff;
+}
+[data-theme="light"] body::after{opacity:.06}
+[data-theme="light"] header,
+[data-theme="light"] .cat-nav{background:rgba(244,245,249,.92)}
+[data-theme="light"] .card{background:#fff}
+[data-theme="light"] body::before{opacity:.008}
+
+/* ─── ANIMATIONS ─────────────────────────────────────────── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes owlbob{0%,100%{transform:rotate(0)}50%{transform:rotate(8deg)}}
+@keyframes lvlpop{0%{transform:scale(1)}40%{transform:scale(1.4)}70%{transform:scale(.95)}100%{transform:scale(1)}}
+
+/* ─── RESPONSIVE ─────────────────────────────────────────── */
+@media(max-width:768px){
+  .header-inner{padding:0 16px;gap:12px}
+  .h-stat,.search-kbd{display:none}
+  .search-wrap{max-width:none}
+  main{padding:16px 16px 48px}
+  .cat-nav-inner{padding:0 16px}
+  .cards-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px}
+  footer{padding:12px 16px}
+}
+@media(max-width:480px){
+  .cards-grid{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+<div id="root">
+
+<!-- HEADER -->
+<header>
+  <div class="header-inner">
+    <div class="logo">
+      <div class="logo-mark">&lt;/&gt;</div>
+      <div class="logo-text">Dev<span>URLs</span></div>
+    </div>
+    <div class="search-wrap">
+      <div class="search-ico">/</div>
+      <input id="search" type="text" placeholder="Search resources, docs, tools…" autocomplete="off" spellcheck="false">
+      <div class="search-kbd">⌘K</div>
+    </div>
+    <div class="header-gap"></div>
+    <div class="h-stat"><b id="total-count">0</b>&nbsp;resources</div>
+    <button class="theme-btn" id="theme-btn" onclick="toggleTheme()" title="Toggle theme">☀️</button>
+  </div>
+</header>
+
+<!-- CATEGORY NAV -->
+<div class="cat-nav">
+  <div class="cat-nav-inner" id="cat-nav"></div>
+</div>
+
+<!-- MAIN -->
+<main id="main"></main>
+<div id="empty">
+  <div class="empty-ico">⌦</div>
+  <div class="empty-txt">No results for "<span id="empty-q"></span>"</div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-gap"></div>
+  <span>Built with ♥ for developers</span>
+  <div class="ft-gap"></div>
+  <span id="footer-count"></span>
+</footer>
+
+</div><!-- /root -->
+
+<script>
+'use strict';
+
+/* ══ DATA ═══════════════════════════════════════════════════════════════ */
+const CATEGORIES = [
+  {
+    id:'ai', name:'AI & ML', color:'#a855f7', dot:'#a855f7',
+    links:[
+      {name:'OpenAI Docs',      url:'https://platform.openai.com/docs',     desc:'GPT, DALL-E, Whisper API reference and guides', tag:'API'},
+      {name:'Anthropic Docs',   url:'https://docs.anthropic.com',            desc:'Claude API, prompt engineering, tool use', tag:'API'},
+      {name:'HuggingFace',      url:'https://huggingface.co',                desc:'Models, datasets, spaces, transformers library', tag:'Platform'},
+      {name:'LangChain Docs',   url:'https://docs.langchain.com',            desc:'LLM app framework — chains, agents, RAG', tag:'Framework'},
+      {name:'fast.ai',          url:'https://www.fast.ai',                   desc:'Practical deep learning course + fastai library', tag:'Course'},
+      {name:'Papers With Code', url:'https://paperswithcode.com',            desc:'ML papers + benchmarks + state-of-the-art results', tag:'Research'},
+      {name:'Ollama',           url:'https://ollama.ai',                     desc:'Run LLMs locally on your machine', tag:'Tool'},
+      {name:'Weights & Biases', url:'https://wandb.ai',                      desc:'ML experiment tracking, visualization, sweeps', tag:'MLOps'},
+      {name:'Lightning AI',     url:'https://lightning.ai',                  desc:'PyTorch Lightning + AI studio + deployment', tag:'Platform'},
+      {name:'Replicate',        url:'https://replicate.com',                 desc:'Run open-source ML models via API', tag:'API'},
+    ]
+  },
+  {
+    id:'docs', name:'Docs & Refs', color:'#3b82f6', dot:'#3b82f6',
+    links:[
+      {name:'MDN Web Docs',     url:'https://developer.mozilla.org',         desc:'The definitive HTML, CSS, and JS reference', tag:'Reference'},
+      {name:'DevDocs',          url:'https://devdocs.io',                    desc:'Offline-capable unified API documentation browser', tag:'Reference'},
+      {name:'TLDRLegal',        url:'https://tldrlegal.com',                 desc:'Software licenses in plain English', tag:'Legal'},
+      {name:'Can I Use',        url:'https://caniuse.com',                   desc:'Browser compatibility for HTML, CSS, JS features', tag:'Compat'},
+      {name:'W3Schools',        url:'https://www.w3schools.com',             desc:'Beginner-friendly web dev tutorials and references', tag:'Tutorial'},
+      {name:'CSS-Tricks',       url:'https://css-tricks.com',                desc:'CSS guides, flexbox, grid, and front-end tricks', tag:'CSS'},
+      {name:'Roadmap.sh',       url:'https://roadmap.sh',                    desc:'Developer learning roadmaps for every stack', tag:'Guide'},
+      {name:'The Odin Project', url:'https://www.theodinproject.com',        desc:'Free full-stack web development curriculum', tag:'Course'},
+      {name:'Regex101',         url:'https://regex101.com',                  desc:'Regex tester, debugger, and quick reference', tag:'Tool'},
+      {name:'JSON Schema',      url:'https://json-schema.org',               desc:'Specification and docs for JSON Schema', tag:'Reference'},
+    ]
+  },
+  {
+    id:'tools', name:'Dev Tools', color:'#10b981', dot:'#10b981',
+    links:[
+      {name:'Vite',             url:'https://vitejs.dev',                    desc:'Lightning fast front-end build tool and dev server', tag:'Build'},
+      {name:'Turbo',            url:'https://turbo.build',                   desc:'High-performance build system for JS monorepos', tag:'Build'},
+      {name:'Bun',              url:'https://bun.sh',                        desc:'All-in-one JavaScript runtime, bundler & package manager', tag:'Runtime'},
+      {name:'Postman',          url:'https://www.postman.com',               desc:'API testing, documentation, and collaboration platform', tag:'API'},
+      {name:'ngrok',            url:'https://ngrok.com',                     desc:'Expose local servers to the internet securely', tag:'Tunnel'},
+      {name:'Excalidraw',       url:'https://excalidraw.com',                desc:'Virtual whiteboard for hand-drawn diagrams', tag:'Design'},
+      {name:'Warp Terminal',    url:'https://www.warp.dev',                  desc:'AI-powered terminal with command palette', tag:'Terminal'},
+      {name:'Fig',              url:'https://fig.io',                        desc:'Autocomplete for your terminal', tag:'Terminal'},
+      {name:'Insomnia',         url:'https://insomnia.rest',                 desc:'Open-source API client with GraphQL support', tag:'API'},
+      {name:'Tauri',            url:'https://tauri.app',                     desc:'Build desktop apps with web front-ends + Rust backend', tag:'Desktop'},
+    ]
+  },
+  {
+    id:'css', name:'CSS & UI', color:'#f59e0b', dot:'#f59e0b',
+    links:[
+      {name:'Tailwind CSS',     url:'https://tailwindcss.com',               desc:'Utility-first CSS framework with JIT compiler', tag:'Framework'},
+      {name:'shadcn/ui',        url:'https://ui.shadcn.com',                 desc:'Copy-paste React components built on Radix + Tailwind', tag:'Components'},
+      {name:'Radix UI',         url:'https://www.radix-ui.com',              desc:'Unstyled, accessible UI primitives for React', tag:'Primitives'},
+      {name:'Framer Motion',    url:'https://www.framer.com/motion',         desc:'Production-ready animation library for React', tag:'Animation'},
+      {name:'GSAP',             url:'https://greensock.com/gsap',            desc:'Professional-grade JS animation platform', tag:'Animation'},
+      {name:'CSS Grid Garden',  url:'https://cssgridgarden.com',             desc:'Interactive game to learn CSS Grid', tag:'Learn'},
+      {name:'Flexbox Froggy',   url:'https://flexboxfroggy.com',             desc:'Game for learning CSS Flexbox', tag:'Learn'},
+      {name:'Google Fonts',     url:'https://fonts.google.com',              desc:'Free, open-source font library from Google', tag:'Fonts'},
+      {name:'Iconify',          url:'https://iconify.design',                desc:'Unified icon framework — 200k+ icons', tag:'Icons'},
+      {name:'Coolors',          url:'https://coolors.co',                    desc:'Super fast color palettes generator', tag:'Color'},
+    ]
+  },
+  {
+    id:'backend', name:'Backend', color:'#ef4444', dot:'#ef4444',
+    links:[
+      {name:'Supabase',         url:'https://supabase.com',                  desc:'Open source Firebase alternative — Postgres + auth', tag:'BaaS'},
+      {name:'PlanetScale',      url:'https://planetscale.com',               desc:'Serverless MySQL with branching workflow', tag:'Database'},
+      {name:'Prisma',           url:'https://www.prisma.io',                 desc:'Next-generation Node.js & TypeScript ORM', tag:'ORM'},
+      {name:'tRPC',             url:'https://trpc.io',                       desc:'End-to-end typesafe APIs for TypeScript', tag:'API'},
+      {name:'Drizzle ORM',      url:'https://orm.drizzle.team',              desc:'TypeScript ORM — lightweight and fast', tag:'ORM'},
+      {name:'Hono',             url:'https://hono.dev',                      desc:'Ultrafast web framework for the edge', tag:'Framework'},
+      {name:'FastAPI',          url:'https://fastapi.tiangolo.com',          desc:'Modern, fast Python web framework for APIs', tag:'Python'},
+      {name:'Redis Docs',       url:'https://redis.io/docs',                 desc:'In-memory data store — caching, pub/sub, streams', tag:'Cache'},
+      {name:'Upstash',          url:'https://upstash.com',                   desc:'Serverless Redis and Kafka for the edge', tag:'Serverless'},
+      {name:'Cloudflare Workers',url:'https://workers.cloudflare.com',       desc:'Serverless JavaScript at the edge, globally', tag:'Edge'},
+    ]
+  },
+  {
+    id:'devops', name:'DevOps', color:'#06b6d4', dot:'#06b6d4',
+    links:[
+      {name:'GitHub Actions',   url:'https://docs.github.com/en/actions',    desc:'Automate CI/CD directly in your GitHub repo', tag:'CI/CD'},
+      {name:'Docker Hub',       url:'https://hub.docker.com',                desc:'Container image registry and Docker documentation', tag:'Containers'},
+      {name:'Kubernetes Docs',  url:'https://kubernetes.io/docs',            desc:'Container orchestration system reference', tag:'Orchestration'},
+      {name:'Terraform',        url:'https://www.terraform.io',              desc:'Infrastructure as code — provision anything', tag:'IaC'},
+      {name:'Fly.io',           url:'https://fly.io',                        desc:'Deploy full-stack apps globally near your users', tag:'Deploy'},
+      {name:'Railway',          url:'https://railway.app',                   desc:'Instant deployments for any stack', tag:'Deploy'},
+      {name:'Render',           url:'https://render.com',                    desc:'Unified cloud for apps, databases, cron jobs', tag:'Deploy'},
+      {name:'Sentry',           url:'https://sentry.io',                     desc:'Error tracking, performance monitoring, replays', tag:'Monitoring'},
+      {name:'Grafana',          url:'https://grafana.com',                   desc:'Open observability platform — metrics, logs, traces', tag:'Monitoring'},
+      {name:'Coolify',          url:'https://coolify.io',                    desc:'Self-hostable Heroku & Netlify alternative', tag:'Self-host'},
+    ]
+  },
+  {
+    id:'learn', name:'Learning', color:'#ec4899', dot:'#ec4899',
+    links:[
+      {name:'freeCodeCamp',     url:'https://www.freecodecamp.org',          desc:'Free coding curriculum — JS, Python, SQL, ML', tag:'Free'},
+      {name:'Fireship',         url:'https://fireship.io',                   desc:'100-second video explanations of dev concepts', tag:'Video'},
+      {name:'Exercism',         url:'https://exercism.org',                  desc:'Practice coding in 67 languages with mentorship', tag:'Practice'},
+      {name:'CS50',             url:'https://cs50.harvard.edu',              desc:"Harvard's intro to computer science — free", tag:'Course'},
+      {name:'Frontend Masters', url:'https://frontendmasters.com',           desc:'In-depth JS, React, Node, CSS expert courses', tag:'Paid'},
+      {name:'Execute Program',  url:'https://www.executeprogram.com',        desc:'Spaced repetition for TypeScript, SQL, regex', tag:'SRS'},
+      {name:'Advent of Code',   url:'https://adventofcode.com',              desc:'Annual coding puzzles every December', tag:'Puzzles'},
+      {name:'Kata.log',         url:'https://www.codewars.com',              desc:'Coding challenges ranked by difficulty', tag:'Practice'},
+      {name:'Scrimba',          url:'https://scrimba.com',                   desc:'Interactive coding screencasts you can edit', tag:'Interactive'},
+      {name:'ByteByteGo',       url:'https://bytebytego.com',                desc:'System design diagrams and newsletter', tag:'System Design'},
+    ]
+  },
+  {
+    id:'perf', name:'Performance', color:'#f97316', dot:'#f97316',
+    links:[
+      {name:'Lighthouse',       url:'https://developers.google.com/web/tools/lighthouse', desc:'Automated auditing for performance, SEO, a11y', tag:'Audit'},
+      {name:'WebPageTest',      url:'https://www.webpagetest.org',           desc:'Deep performance analysis with waterfall charts', tag:'Testing'},
+      {name:'Bundlephobia',     url:'https://bundlephobia.com',              desc:'Find the cost of adding an npm package', tag:'Bundles'},
+      {name:'web.dev',          url:'https://web.dev',                       desc:"Google's best practices for the modern web", tag:'Guide'},
+      {name:'Core Web Vitals',  url:'https://web.dev/vitals',                desc:'LCP, CLS, FID — measuring user experience', tag:'Metrics'},
+      {name:'Squoosh',          url:'https://squoosh.app',                   desc:'Browser-based image compression and format conversion', tag:'Images'},
+      {name:'SVGOMG',           url:'https://jakearchibald.github.io/svgomg', desc:'SVG optimizer — remove metadata, minify paths', tag:'SVG'},
+      {name:'PurgeCSS',         url:'https://purgecss.com',                  desc:'Remove unused CSS from your bundle', tag:'CSS'},
+      {name:'Partytown',        url:'https://partytown.builder.io',          desc:'Relocate third-party scripts into web workers', tag:'Library'},
+      {name:'Million.js',       url:'https://million.dev',                   desc:'Drop-in optimization to make React 70% faster', tag:'React'},
+    ]
+  },
+];
+
+/* ══ STATE ════════════════════════════════════════════════════════════════ */
+let isDark = true;
+let activeFilter = 'all';
+let searchQuery = '';
+
+/* ══ THEME ════════════════════════════════════════════════════════════════ */
+function toggleTheme(){
+  isDark = !isDark;
+  document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+  document.getElementById('theme-btn').textContent = isDark ? '☀️' : '🌙';
+}
+
+/* ══ TOTAL COUNT ══════════════════════════════════════════════════════════ */
+const TOTAL = CATEGORIES.reduce((s,c)=>s+c.links.length,0);
+document.getElementById('total-count').textContent = TOTAL;
+document.getElementById('footer-count').textContent = TOTAL + ' resources across ' + CATEGORIES.length + ' categories';
+
+/* ══ CATEGORY NAV ════════════════════════════════════════════════════════ */
+function renderCatNav(){
+  const nav = document.getElementById('cat-nav');
+  // ALL pill
+  nav.innerHTML = `<button class="cat-pill ${activeFilter==='all'?'active':''}" onclick="setFilter('all',this)">
+    <span class="cat-pill-dot" style="background:#fff"></span>All
+    <span class="cat-count">${TOTAL}</span>
+  </button>`;
+  CATEGORIES.forEach(cat=>{
+    const visible = cat.links.filter(l=>matchesSearch(l,cat)).length;
+    nav.innerHTML += `<button class="cat-pill ${activeFilter===cat.id?'active':''}" onclick="setFilter('${cat.id}',this)">
+      <span class="cat-pill-dot" style="background:${cat.color}"></span>${cat.name}
+      <span class="cat-count">${cat.links.length}</span>
+    </button>`;
+  });
+}
+
+function setFilter(id, btn){
+  activeFilter = id;
+  document.querySelectorAll('.cat-pill').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  renderMain();
+}
+
+/* ══ SEARCH ═══════════════════════════════════════════════════════════════ */
+document.getElementById('search').addEventListener('input', e=>{
+  searchQuery = e.target.value.trim().toLowerCase();
+  renderCatNav();
+  renderMain();
+});
+
+// ⌘K / Ctrl+K focus
+document.addEventListener('keydown', e=>{
+  if((e.metaKey||e.ctrlKey)&&e.key==='k'){
+    e.preventDefault();
+    document.getElementById('search').focus();
+    document.getElementById('search').select();
+  }
+  if(e.key==='Escape') document.getElementById('search').blur();
+});
+
+function matchesSearch(link, cat){
+  if(!searchQuery) return true;
+  return (
+    link.name.toLowerCase().includes(searchQuery) ||
+    link.desc.toLowerCase().includes(searchQuery) ||
+    link.tag.toLowerCase().includes(searchQuery) ||
+    cat.name.toLowerCase().includes(searchQuery)
+  );
+}
+
+/* ══ FAVICON HELPER ══════════════════════════════════════════════════════ */
+function faviconUrl(url){
+  try{
+    const domain = new URL(url).hostname;
+    return `https://www.google.com/s2/favicons?domain=${domain}&sz=32`;
+  }catch(e){ return null; }
+}
+
+/* ══ RENDER MAIN ═════════════════════════════════════════════════════════ */
+function renderMain(){
+  const main = document.getElementById('main');
+  const empty = document.getElementById('empty');
+  let totalVisible = 0;
+  let html = '';
+
+  const cats = activeFilter === 'all'
+    ? CATEGORIES
+    : CATEGORIES.filter(c=>c.id===activeFilter);
+
+  cats.forEach((cat, ci)=>{
+    const links = cat.links.filter(l=>matchesSearch(l,cat));
+    if(!links.length) return;
+    totalVisible += links.length;
+
+    html += `<div class="section" style="animation-delay:${ci*0.05}s">
+      <div class="section-header">
+        <span class="section-dot" style="background:${cat.color};box-shadow:0 0 8px ${cat.color}66"></span>
+        <span class="section-title" style="color:${cat.color}">${cat.name}</span>
+        <span class="section-line"></span>
+        <span class="section-count">${links.length} links</span>
+      </div>
+      <div class="cards-grid">`;
+
+    links.forEach(link=>{
+      const fav = faviconUrl(link.url);
+      html += `<a class="card" href="${link.url}" target="_blank" rel="noopener noreferrer"
+        style="--c-accent:${cat.color}"
+        title="${link.name} — ${link.desc}">
+        <div class="card-fav">
+          ${fav ? `<img src="${fav}" alt="${link.name}" loading="lazy" onerror="this.parentNode.innerHTML='${cat.name[0]}'">` : cat.name[0]}
+        </div>
+        <div class="card-body">
+          <div class="card-name">${esc(link.name)}</div>
+          <div class="card-desc">${esc(link.desc)}</div>
+          <span class="card-tag" style="color:${cat.color};border-color:${cat.color}33;background:${cat.color}11">${link.tag}</span>
+        </div>
+      </a>`;
+    });
+
+    html += `</div></div>`;
+  });
+
+  if(totalVisible === 0){
+    main.innerHTML = '';
+    main.style.display = 'none';
+    empty.classList.add('show');
+    document.getElementById('empty-q').textContent = searchQuery;
+  } else {
+    main.innerHTML = html;
+    main.style.display = '';
+    empty.classList.remove('show');
+  }
+}
+
+/* ══ UTIL ════════════════════════════════════════════════════════════════ */
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;') }
+
+/* ══ INIT ════════════════════════════════════════════════════════════════ */
+renderCatNav();
+renderMain();
+</script>
+</body>
+</html>
